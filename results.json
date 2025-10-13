@@ -1,0 +1,26 @@
+[
+  {
+    "tokenizer": "WordTokenizer",
+    "vocab_size": 1136,
+    "total_tokens": 2099,
+    "avg_tokens_per_sentence": 20.99,
+    "compression_ratio_chars_per_token": 5.136731777036684,
+    "time_ms_tokenize": 0.4585999995470047
+  },
+  {
+    "tokenizer": "CharTokenizer",
+    "vocab_size": 77,
+    "total_tokens": 10782,
+    "avg_tokens_per_sentence": 107.82,
+    "compression_ratio_chars_per_token": 1.0,
+    "time_ms_tokenize": 0.6105999927967787
+  },
+  {
+    "tokenizer": "BPETokenizer",
+    "vocab_size": 2078,
+    "total_tokens": 5026,
+    "avg_tokens_per_sentence": 50.26,
+    "compression_ratio_chars_per_token": 2.1452447274174293,
+    "time_ms_tokenize": 748.5223999246955
+  }
+]

@@ -1,0 +1,14 @@
+tests/*.out
+.cache
+__pycache__/
+__pypackages__/
+.ipynb_checkpoints
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+result.json
