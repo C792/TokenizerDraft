@@ -59,28 +59,27 @@ class BPETokenizer(Tokenizer):
         """Tokenize a string using the learned BPE merges."""
         words = text.strip().split(' ')
         
-        all_tokens = []
+        tks = []
         for word in words:
-            if not word:
-                continue
-            symbols = list(word) + [self._eow]
+            if not word: continue
+            token = list(word) + [self._eow]
             
             for pair in self._merges:
-                new_symbols = []
+                t = []
                 i = 0
-                while i < len(symbols):
-                    if i < len(symbols) - 1 and (symbols[i], symbols[i+1]) == pair:
-                        new_symbols.append("".join(pair))
+                while i < len(token):
+                    if i < len(token) - 1 and (token[i], token[i+1]) == pair:
+                        t.append("".join(pair))
                         i += 2
                     else:
-                        new_symbols.append(symbols[i])
+                        t.append(token[i])
                         i += 1
-                symbols = new_symbols
+                token = t
             
-            all_tokens.extend(symbols)
+            tks.extend(token)
             
-        final_tokens = [tok.replace(self._eow, '') for tok in all_tokens]
-        return [tok for tok in final_tokens if tok]
+        res = [tok.replace(self._eow, '') for tok in tks]
+        return [tok for tok in res if tok]
 
     def vocab_size(self) -> int:
         return len(self._vocab)

@@ -22,12 +22,7 @@ def main():
     ]
 
     for tk in tokenizers:
-        # print(f"{tk.name}")
         tk.build_vocab(corpus_lines)
-        # print(sorted(tk._vocab, key=lambda x: (len(x), x)))
-        # print(f"{tk.name} vocab size: {tk.vocab_size()}")
-        # with open(f"{tk.name}_vocab.txt", "w", encoding="utf-8") as f:
-        #     f.write("\n".join(sorted(tk._vocab, key=lambda x: (len(x), x))))
 
     ev = Evaluator(corpus_lines)
     results = ev.compare(tokenizers)
@@ -37,6 +32,18 @@ def main():
 
     print(f"Results saved to {args.out}")
     print(json.dumps(results, ensure_ascii=False, indent=2))
+
+    # WordTokenizer basic: lowercase behavior should be consistent
+    wt = WordTokenizer(lowercase=True); wt.build_vocab(["Hello world"])
+    assert wt.tokenize("HeLLo world") == ["hello", "world"]
+
+    # CharTokenizer should drop spaces
+    ct = CharTokenizer(); ct.build_vocab(["a b"])
+    assert ct.tokenize("a b") == ["a","b"]
+
+    # BPE determinism across calls (after build)
+    bpe = BPETokenizer(num_merges=10); bpe.build_vocab(["low lower lowest", "low"])
+    assert bpe.tokenize("lower") == bpe.tokenize("lower")
 
     test("tests", tokenizers)
 
