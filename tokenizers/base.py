@@ -17,6 +17,10 @@ class Tokenizer(ABC):
     def vocab_size(self) -> int:
         """Read-only size of the (learned) vocabulary/state."""
         raise NotImplementedError("Implement in subclass")
+    
+    @abstractmethod
+    def oov_rate(self, text: str) -> float:
+        raise NotImplementedError("Implement in subclass")
 
     @property
     def name(self) -> str:

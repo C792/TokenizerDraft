@@ -12,8 +12,8 @@ class BPETokenizer(Tokenizer):
         self._merges = []
         self._eow = "</w>"
 
-    def _get_pair_stats(self, vocab: Dict[str, int]) -> Counter:
-        """Helper to count adjacent pairs from the vocab representation."""
+    def _get_pair(self, vocab: Dict[str, int]) -> Counter:
+        # Counter로 빈도를 계산하는 내부 함수
         stats = Counter()
         for word, freq in vocab.items():
             symbols = word.split()
@@ -22,46 +22,45 @@ class BPETokenizer(Tokenizer):
         return stats
 
     def _merge_vocab(self, pair: Tuple[str, str], in_vocab: Dict[str, int]) -> Dict[str, int]:
-        """Helper to merge a pair in the vocab representation."""
-        out_vocab = {}
-        bigram_str = ' '.join(pair)
-        replacement = ''.join(pair)
+        # 빈도에 따른 토큰을 병합하는 내부 함수
+        res = {}
+        bi = ' '.join(pair)
+        repl = ''.join(pair)
         for word, freq in in_vocab.items():
-            new_word = word.replace(bigram_str, replacement)
-            out_vocab[new_word] = freq
-        return out_vocab
+            i = word.replace(bi, repl)
+            res[i] = freq
+        return res
 
     def build_vocab(self, corpus: Iterable[str]) -> None:
         """Learn BPE merges and vocabulary from a corpus."""
-        word_counts = Counter()
+        cnt = Counter()
         for line in corpus:
-            word_counts.update(line.strip().split(' '))
+            cnt.update(line.strip().split(' '))
 
-        vocab = {' '.join(list(w) + [self._eow]): count for w, count in word_counts.items() if w}
+        vocab = {' '.join(list(w) + [self._eow]): count for w, count in cnt.items() if w}
 
         char_vocab = set()
-        for word in word_counts:
+        for word in cnt:
             char_vocab.update(list(word))
         self._vocab = char_vocab
         self._vocab.add(self._eow)
 
         self._merges.clear()
         for i in range(self._num_merges):
-            pair_stats = self._get_pair_stats(vocab)
-            if not pair_stats:
-                break
-            best_pair = max(pair_stats, key=pair_stats.get)
-            vocab = self._merge_vocab(best_pair, vocab)
-            self._merges.append(best_pair)
-            self._vocab.add("".join(best_pair))
+            p = self._get_pair(vocab)
+            if not p: break
+            p = max(p, key=p.get)
+            vocab = self._merge_vocab(p, vocab)
+            self._merges.append(p)
+            self._vocab.add("".join(p))
 
     def tokenize(self, text: str) -> List[str]:
         """Tokenize a string using the learned BPE merges."""
         words = text.strip().split(' ')
         
-        tks = []
+        tks = [] # 토큰을 담는 리스트
         for word in words:
-            if not word: continue
+            if not word: continue # Invalid한 입력 방지: 빈 단어 건너뛰기
             token = list(word) + [self._eow]
             
             for pair in self._merges:
@@ -83,3 +82,12 @@ class BPETokenizer(Tokenizer):
 
     def vocab_size(self) -> int:
         return len(self._vocab)
+
+    def oov_rate(self, test_corpus: str) -> float:
+        real = set()
+        for line in test_corpus:
+            real.update(self.tokenize(line))
+        
+        if not real: return 0.0
+        oov = real - self._vocab
+        return len(oov) / len(real)

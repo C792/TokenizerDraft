@@ -8,6 +8,7 @@ classDiagram
         +build_vocab(corpus: Iterable~str~) void*
         +tokenize(text: str) List~str~*
         +vocab_size() int*
+        +oov_rate() float*
     }
     
 
@@ -16,6 +17,7 @@ classDiagram
         +build_vocab(corpus: Iterable~str~) void
         +tokenize(text: str) List~str~
         +vocab_size() int
+        +oov_rate() float
     }
 
     class CharTokenizer {
@@ -23,6 +25,7 @@ classDiagram
         +build_vocab(corpus: Iterable~str~) void
         +tokenize(text: str) List~str~
         +vocab_size() int
+        +oov_rate() float
     }
 
     class BPETokenizer {
@@ -32,6 +35,7 @@ classDiagram
         +build_vocab(corpus: Iterable~str~) void
         +tokenize(text: str) List~str~
         +vocab_size() int
+        +oov_rate() float
     }
     
 

@@ -24,3 +24,12 @@ class WordTokenizer(Tokenizer):
 
     def vocab_size(self) -> int:
         return len(self._vocab)
+
+    def oov_rate(self, test_corpus: str) -> float:
+        real = set()
+        for line in test_corpus:
+            real.update(self.tokenize(line))
+        
+        if not real: return 0.0
+        oov = real - self._vocab
+        return len(oov) / len(real)

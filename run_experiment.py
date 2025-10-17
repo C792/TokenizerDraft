@@ -45,9 +45,17 @@ def main():
     bpe = BPETokenizer(num_merges=10); bpe.build_vocab(["low lower lowest", "low"])
     assert bpe.tokenize("lower") == bpe.tokenize("lower")
 
-    test("tests", tokenizers)
+    oov = test("tests", tokenizers)
+    for i in oov:
+        print(i)
+        for testfile, rate in oov[i]:
+            print(f" {testfile}: {rate:.2%}")
+
 
 def test(dirname, tokenizers, lgs=True):
+    ret = {}
+    for tk in tokenizers:
+        ret[f"{tk.name}"] = []
     for testfile in [i[:-3] for i in os.listdir(dirname) if i.endswith(".in")]:
         test_lines = ""
         with open(f"tests/{testfile}.in", "r", encoding="utf-8") as f:
@@ -55,7 +63,12 @@ def test(dirname, tokenizers, lgs=True):
         for tk in tokenizers:
             with open(f"tests/{testfile}_{tk.name}.out", "w", encoding="utf-8") as f:
                 f.write(str(tk.tokenize(test_lines)))
-        if lgs: print(f"Tested {testfile}.in")
+                f.write("\n")
+                f.write(str(tk.oov_rate(test_lines)))
+                ret[f"{tk.name}"].append((testfile, tk.oov_rate(test_lines)))
+        if lgs:
+            print(f"Tested {testfile}.in")
+    return ret
 
 if __name__ == "__main__":
     main()
