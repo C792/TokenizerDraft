@@ -32,6 +32,8 @@ classDiagram
         -num_merges: int
         -vocab: Set~str~
         -merges: List
+        +_get_pair(vocab:Dict~str,int~) Counter
+        +_merge_vocab(pair:Counter,vocab:Dict~str,int~) Dict~str,int~
         +build_vocab(corpus: Iterable~str~) void
         +tokenize(text: str) List~str~
         +vocab_size() int
