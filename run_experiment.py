@@ -63,8 +63,6 @@ def test(dirname, tokenizers, lgs=True):
         for tk in tokenizers:
             with open(f"tests/{testfile}_{tk.name}.out", "w", encoding="utf-8") as f:
                 f.write(str(tk.tokenize(test_lines)))
-                f.write("\n")
-                f.write(str(tk.oov_rate(test_lines)))
                 ret[f"{tk.name}"].append((testfile, tk.oov_rate(test_lines)))
         if lgs:
             print(f"Tested {testfile}.in")
